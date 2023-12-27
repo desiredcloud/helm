@@ -81,6 +81,16 @@ Environment variables:
 
 - The data path is used to store plugins. When a plugin is installed using the helm plugin install command, the plugin itself is stored in this location.
 
-
 ---
 
+#### TAB Completion
+
+- For bash
+```shell
+source <(helm completion bash)
+```
+
+- For zsh
+```shell
+source <(helm completion zsh)
+```
