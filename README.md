@@ -83,7 +83,7 @@ Environment variables:
 
 ---
 
-#### TAB Completion
+#### [TAB Completion](https://helm.sh/docs/helm/helm_completion/)
 
 - For bash
 ```shell
@@ -93,4 +93,49 @@ source <(helm completion bash)
 - For zsh
 ```shell
 source <(helm completion zsh)
+```
+
+---
+
+#### [Artifact Hub](https://www.cncf.io/projects/artifact-hub/)
+
+- Find, install and publish Kubernetes packages
+
+- Will search `wordpress` chart in ArtifactHub
+```bash
+helm search hub wordpress --list-repo-url
+
+helm search hub wordpress --output yaml
+```
+
+- Will add the `Bitnami` repo in your local index.
+  - `archive-full-index` will list all the old charts as well.
+```shell
+% helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami 
+% helm repo list
+NAME             	URL                                                                                                              
+bitnami          	https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+```
+
+- Will list all the available charts under `binami` repo.
+  - Always run `helm repo update`, this will update you locally added repos.
+```shell
+helm search repo bitnami
+NAME                                        	CHART VERSION	APP VERSION  	DESCRIPTION                                       
+bitnami/bitnami-common                      	0.0.9        	0.0.9        	DEPRECATED Chart with custom templates used in ...
+bitnami/airflow                             	16.1.8       	2.8.0        	Apache Airflow is a tool to express and execute...
+bitnami/apache                              	10.2.4       	2.4.58       	Apache HTTP Server is an open-source HTTP serve...
+...
+
+helm search repo bitnami --output yaml
+
+helm search repo wordpress           
+NAME                   	CHART VERSION	APP VERSION	DESCRIPTION                                       
+bitnami/wordpress      	19.0.4       	6.4.2      	WordPress is the world's most popular blogging ...
+bitnami/wordpress-intel	2.1.31       	6.1.1      	DEPRECATED WordPress for Intel is the most popu...
+```
+
+- Search all previous versions
+```shell
+
 ```
