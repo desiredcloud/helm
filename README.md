@@ -137,5 +137,68 @@ bitnami/wordpress-intel	2.1.31       	6.1.1      	DEPRECATED WordPress for Intel
 
 - Search all previous versions
 ```shell
+helm search repo wordpress --versions
+NAME                   	CHART VERSION	APP VERSION   	DESCRIPTION                                       
+bitnami/wordpress      	19.0.4       	6.4.2         	WordPress is the world's most popular blogging ...
+bitnami/wordpress      	19.0.3       	6.4.2         	WordPress is the world's most popular blogging ...
+bitnami/wordpress      	19.0.2       	6.4.2         	WordPress is the world's most popular blogging ...
+...
+```
+
+- Showing all information of the chart:
+```shell
+helm show chart bitnami/wordpress 
+# OR
+# helm show chart bitnami/wordpress --version 19.0.4
+
+annotations:
+  category: CMS
+  images: |
+    - name: wordpress
+      image: docker.io/bitnami/wordpress:6.4.2-debian-11-r10
+  licenses: Apache-2.0
+apiVersion: v2
+appVersion: 6.4.2
+dependencies:
+...
+description: WordPress ...
+home: https://bitnami.com
+icon: https://bitnami.com/assets/stacks/wordpress/img/wordpress-stack-220x234.png
+keywords:
+- application
+name: wordpress
+sources:
+- https://github.com/bitnami/charts/tree/main/bitnami/wordpress
+version: 19.0.4
+```
+
+```shell
+Available Commands:
+  all         show all information of the chart
+  chart       show the chart's definition
+  crds        show the chart's CRDs
+  readme      show the chart's README
+  values      show the chart's values
+```
+
+---
+
+- Overriding values, using `values.yaml`
+```shell
+cat wordpress-values.yaml 
+service:
+  type: NodePort
+wordpressUsername: helm-user
+wordpressPassword: my-password
+wordpressEmail: helm-user@example.com
+wordpressFirstName: Helm_is
+wordpressLastName: Fun
+wordpressBlogName: Learn Helm!
+```
+
+- Installing helm chart
+```shell
+helm install [NAME] [CHART] [flags]
+
 
 ```
