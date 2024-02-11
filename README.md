@@ -1,4 +1,4 @@
-# helm
+# Helm
 
 
 - Add helm repo on your local machine:
@@ -75,7 +75,7 @@ Environment variables:
 | macOS            | `$HOME/Library/Caches/helm`       | `$HOME/Library/Preferences/helm` | `$HOME/Library/helm`             |
 | Linux            | `$HOME/.cache/helm`               | `$HOME/.config/helm`             | `$HOME/.local/share/helm`        |
 
-- Helm uses the cache path to store charts that are downloaded from upstream chart repositories. Installed charts are cached to the local machine to enable faster installation of the chart the next time it is referenced. The cache path also includes YAML files that are used to index the available Helm charts from each configured repository. These index files are updated when users run the helm repo update command.
+- Helm uses the cache path to store charts that are downloaded from upstream chart repositories. Installed charts are cached to the local machine to enable faster installation of the chart the next time it is referenced. The cache path also includes YAML files that are used to index the available Helm charts from each configured repository. These index files are updated when users run the `helm repo update` command.
 
 - The configuration path is used to save repository information, such as the URL and credentials for authentication, if required. When a chart is installed but is not located in the local cache yet, Helm uses the configuration path to look up the URL of the chart repository. The chart is then downloaded from this URL.
 
@@ -136,6 +136,7 @@ bitnami/wordpress-intel	2.1.31       	6.1.1      	DEPRECATED WordPress for Intel
 ```
 
 - Search all previous versions
+
 ```shell
 helm search repo wordpress --versions
 NAME                   	CHART VERSION	APP VERSION   	DESCRIPTION                                       
@@ -173,6 +174,9 @@ version: 19.0.4
 ```
 
 ```shell
+Usage:
+  helm show [command]
+
 Available Commands:
   all         show all information of the chart
   chart       show the chart's definition
@@ -182,6 +186,11 @@ Available Commands:
 ```
 
 ---
+
+- To see chart's default values
+```shell
+helm show values bitnami/wordpress --version 12.1.6
+```
 
 - Overriding values, using `values.yaml`
 ```shell
@@ -199,6 +208,87 @@ wordpressBlogName: Learn Helm!
 - Installing helm chart
 ```shell
 helm install [NAME] [CHART] [flags]
-
-
 ```
+
+```shell
+kubectl create namespace wordpress
+```
+
+```shell
+helm install wordpress bitnami/wordpress --values=values.yaml -n wordpress --version 12.1.6
+NAME: wordpress
+LAST DEPLOYED: Wed Feb  7 20:55:36 2024
+NAMESPACE: wordpress
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+```
+
+- Get notes of a release
+- First, get list of releases
+```shell
+helm list -A
+NAME     	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART           	APP VERSION
+wordpress	wordpress	1       	2024-02-07 20:55:36.291079 +0530 IST	deployed	wordpress-12.1.6	5.8.0      
+```
+- Get notes by release name
+```shell
+helm get notes wordpress -n wordpress
+NOTES:
+Your WordPress site can be accessed through the following DNS name from within your cluster:
+..
+```
+
+- Get manifest of named release
+```shell
+helm get manifest wordpress -n wordpress
+```
+
+- You can get following details around any release, using `helm get` command.
+```shell
+helm get -h                             
+
+Available Commands:
+  all         download all information for a named release
+  hooks       download all hooks for a named release
+  manifest    download the manifest for a named release
+  notes       download the notes for a named release
+  values      download the values file for a named release
+```
+
+- :heavy_exclamation_mark: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here's the data formatted as a Markdown table:
+
+| File/Directory          | Definition                                                                                           | Required?                            |
+|-------------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
+| charts/                 | A directory that contains dependencies or Helm charts that the parent chart depends on.              | No                                   |
+| Chart.yaml              | A file that contains metadata about the Helm chart.                                                   | Yes                                  |
+| .helmignore             | A file that contains a list of files and directories that should be omitted from the Helm chart’s packaging. | No                                   |
+| templates/              | A directory that contains Golang templates, which are primarily used for generating Kubernetes resources. | Yes, unless the chart contains dependencies |
+| templates/*.yaml        | A template file used to generate a Kubernetes resource.                                               | Yes, unless the chart contains dependencies |
+| templates/_*.tpl        | A file that contains boilerplate helper templates.                                                    | No                                   |
+| templates/NOTES.txt    | A template file that is used to generate usage instructions after chart installation.                 | No                                   |
+| templates/tests/        | A folder used for grouping different templates. This is strictly for aesthetics and has no effect on how the Helm chart operates – for example, templates/tests is used to group templates that are used for testing. | No                                   |
+| values.yaml             | A file that contains the chart’s default values.                                                      | No, but every chart should contain this file as a best practice |
