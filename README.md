@@ -1,5 +1,7 @@
-# Helm
+# Starting with Helm 
 
+
+## Helm Repositories
 
 - Add helm repo on your local machine:
   ```yaml
@@ -37,7 +39,7 @@
   ```
 
 ---
-#### Helm Plugins
+## Helm Plugins
 
 A [Helm plugin](https://helm.sh/docs/topics/plugins/) is a tool that can be accessed through the helm CLI, but which is not part of the built-in Helm codebase.
 
@@ -51,7 +53,7 @@ Examples:
 - `Helm Unittest`: Used to perform unit testing on a Helm chart
 
 ---
- #### Helm ENV Vars
+## Helm ENV Vars
 
 ```bash
 helm -h
@@ -83,7 +85,7 @@ Environment variables:
 
 ---
 
-#### [TAB Completion](https://helm.sh/docs/helm/helm_completion/)
+## [TAB Completion](https://helm.sh/docs/helm/helm_completion/)
 
 - For bash
 ```shell
@@ -97,7 +99,7 @@ source <(helm completion zsh)
 
 ---
 
-#### [Artifact Hub](https://www.cncf.io/projects/artifact-hub/)
+## [Artifact Hub](https://www.cncf.io/projects/artifact-hub/)
 
 - Find, install and publish Kubernetes packages
 
