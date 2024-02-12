@@ -257,12 +257,123 @@ Available Commands:
   values      download the values file for a named release
 ```
 
-- :heavy_exclamation_mark: 
+---
 
+- Get values that has been applied on the installed release:
+```shell
+helm get values wordpress -n wordpress
+```
 
+- - Get all values supported by this release :
+```shell
+helm get values wordpress --all -n wordpress
+```
 
+- Many Helm charts add the app.kubernetes.io/name label (or a similar label) on the resources they create.
+```shell
+kubectl get all -l app.kubernetes.io/name=wordpress -n wordpress
+```
 
+---
 
+## Upgrading WordPress Release
+
+- Let's update `values.yaml` and add following values:
+  ```shell
+  replicaCount: 2
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  ```
+
+```shell
+helm upgrade [RELEASE] [CHART] [flags]
+
+helm upgrade --install wordpress bitnami/wordpress --values values.yaml -n wordpress --version 12.1.6
+```
+```shell
+helm list -n wordpress
+NAME     	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART           	APP VERSION
+wordpress	wordpress	2       	2024-02-12 08:43:52.103338 +0530 IST	deployed	wordpress-12.1.6	5.8.0      
+```
+
+- Helm upgrade command includes two additional values-related flags.
+  - `--reuse-values` (default): When upgrading, reuse the last release’s values
+  - `--reset-values`: When upgrading, reset the values to the chart defaults
+  - If at least one value is provided with `--set` or `--values`, then the `--reset-values` flag is applied by default.
+
+---
+
+## Rolling back 
+
+- Every Helm release has a history of `revisions`.
+- Revision data is saved in Kubernetes Secrets by default.
+
+```shell
+kubectl get secrets -n wordpress | grep release
+sh.helm.release.v1.wordpress.v1   helm.sh/release.v1   1      4d12h
+sh.helm.release.v1.wordpress.v2   helm.sh/release.v1   1      39m
+```
+
+- Each of these Secrets corresponds with an entry of the release’s revision history
+
+```shell
+helm history wordpress -n wordpress
+REVISION	UPDATED                 	STATUS    	CHART           	APP VERSION	DESCRIPTION     
+1       	Wed Feb  7 20:55:36 2024	superseded	wordpress-12.1.6	5.8.0      	Install complete
+2       	Mon Feb 12 08:43:52 2024	deployed  	wordpress-12.1.6	5.8.0      	Upgrade complete
+```
+
+- We can check the values, that has been applied on a specific `REVISION`.
+```shell
+helm get values wordpress --revision 2 -n wordpress 
+USER-SUPPLIED VALUES:
+...
+```
+
+`helm rollback <RELEASE> [REVISION] [flags]`
+
+```shell
+helm history wordpress -n wordpress
+REVISION	UPDATED                 	STATUS    	CHART           	APP VERSION	DESCRIPTION     
+1       	Wed Feb  7 20:55:36 2024	superseded	wordpress-12.1.6	5.8.0      	Install complete
+2       	Mon Feb 12 08:43:52 2024	deployed  	wordpress-12.1.6	5.8.0      	Upgrade complete
+
+helm rollback wordpress 1 -n wordpress
+Rollback was a success! Happy Helming!
+
+helm history wordpress -n wordpress   
+REVISION	UPDATED                 	STATUS    	CHART           	APP VERSION	DESCRIPTION     
+1       	Wed Feb  7 20:55:36 2024	superseded	wordpress-12.1.6	5.8.0      	Install complete
+2       	Mon Feb 12 08:43:52 2024	superseded	wordpress-12.1.6	5.8.0      	Upgrade complete
+3       	Mon Feb 12 09:44:30 2024	deployed  	wordpress-12.1.6	5.8.0      	Rollback to 1   
+```
+
+---
+
+## Uninstalling helm Release
+
+```shell
+helm uninstall RELEASE_NAME [...] [flags]
+```
+
+```shell
+helm uninstall wordpress -n wordpress
+release "wordpress" uninstalled
+```
+
+- Helm will not delete any additional resources created by the resources from the helm chart.
+- For example, a PVC got created for the statefulset. Which is not part of chart.
+- So, will have to manually delete that.
+```shell
+kubectl get pvc -n wordpress
+NAME                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-wordpress-mariadb-0   Bound    pvc-42962f89-6595-4982-bf3d-6d5839babf73   8Gi        RWO            standard       4d13h
+
+kubectl delete pvc data-wordpress-mariadb-0 -n wordpress
+persistentvolumeclaim "data-wordpress-mariadb-0" deleted
+```
 
 
 
