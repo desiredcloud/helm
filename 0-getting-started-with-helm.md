@@ -1,5 +1,6 @@
-# Starting with Helm 
+# Getting started with Helm 
 
+(Install, Upgrade, Rollback, Uninstall)
 
 ## Helm Repositories
 
@@ -392,16 +393,3 @@ persistentvolumeclaim "data-wordpress-mariadb-0" deleted
 
 
 
-Here's the data formatted as a Markdown table:
-
-| File/Directory          | Definition                                                                                           | Required?                            |
-|-------------------------|------------------------------------------------------------------------------------------------------|--------------------------------------|
-| charts/                 | A directory that contains dependencies or Helm charts that the parent chart depends on.              | No                                   |
-| Chart.yaml              | A file that contains metadata about the Helm chart.                                                   | Yes                                  |
-| .helmignore             | A file that contains a list of files and directories that should be omitted from the Helm chart’s packaging. | No                                   |
-| templates/              | A directory that contains Golang templates, which are primarily used for generating Kubernetes resources. | Yes, unless the chart contains dependencies |
-| templates/*.yaml        | A template file used to generate a Kubernetes resource.                                               | Yes, unless the chart contains dependencies |
-| templates/_*.tpl        | A file that contains boilerplate helper templates.                                                    | No                                   |
-| templates/NOTES.txt    | A template file that is used to generate usage instructions after chart installation.                 | No                                   |
-| templates/tests/        | A folder used for grouping different templates. This is strictly for aesthetics and has no effect on how the Helm chart operates – for example, templates/tests is used to group templates that are used for testing. | No                                   |
-| values.yaml             | A file that contains the chart’s default values.                                                      | No, but every chart should contain this file as a best practice |
