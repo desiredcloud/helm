@@ -149,27 +149,56 @@ bitnami/wordpress      	19.0.2       	6.4.2         	WordPress is the world's mo
 ...
 ```
 
-- Showing all information of the chart:
+## Chart details
+
 ```shell
 helm show chart bitnami/wordpress 
 # OR
 # helm show chart bitnami/wordpress --version 19.0.4
 
+helm show chart bitnami/wordpress
 annotations:
   category: CMS
   images: |
+    - name: apache-exporter
+      image: docker.io/bitnami/apache-exporter:1.0.3-debian-11-r2
+    - name: os-shell
+      image: docker.io/bitnami/os-shell:11-debian-11-r92
     - name: wordpress
       image: docker.io/bitnami/wordpress:6.4.2-debian-11-r10
   licenses: Apache-2.0
 apiVersion: v2
 appVersion: 6.4.2
 dependencies:
-...
-description: WordPress ...
+- condition: memcached.enabled
+  name: memcached
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 6.x.x
+- condition: mariadb.enabled
+  name: mariadb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 15.x.x
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  tags:
+  - bitnami-common
+  version: 2.x.x
+description: WordPress is the world's most popular blogging and content management
+  platform. Powerful yet simple, everyone from students to global corporations use
+  it to build beautiful, functional websites.
 home: https://bitnami.com
 icon: https://bitnami.com/assets/stacks/wordpress/img/wordpress-stack-220x234.png
 keywords:
 - application
+- blog
+- cms
+- http
+- php
+- web
+- wordpress
+maintainers:
+- name: VMware, Inc.
+  url: https://github.com/bitnami/charts
 name: wordpress
 sources:
 - https://github.com/bitnami/charts/tree/main/bitnami/wordpress
@@ -377,19 +406,3 @@ data-wordpress-mariadb-0   Bound    pvc-42962f89-6595-4982-bf3d-6d5839babf73   8
 kubectl delete pvc data-wordpress-mariadb-0 -n wordpress
 persistentvolumeclaim "data-wordpress-mariadb-0" deleted
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

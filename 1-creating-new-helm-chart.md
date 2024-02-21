@@ -136,3 +136,20 @@ version: 0.1.0
 appVersion: "1.16.0"
 ```
 
+---
+
+## Chart Dependencies
+
+[Check dependencies](0-getting-started-with-helm.md#chart-details)
+
+| Field          | Description                                               | Required? |
+|----------------|-----------------------------------------------------------|-----------|
+| Name           | The name of the dependency chart                          | Yes       |
+| Repository     | The location where the dependency chart resides           | Yes       |
+| Version        | The chart dependency version                              | Yes       |
+| Condition      | A Boolean value that determines whether to include the dependency or not | No        |
+| Tags           | A list of Boolean values that determine whether to include the chart or not | No        |
+| import-values  | A mapping of source values to parent values               | No        |
+| Alias          | An alternative name to give the dependency                | No        |
+
+
