@@ -142,6 +142,8 @@ appVersion: "1.16.0"
 
 [Check dependencies](0-getting-started-with-helm.md#chart-details)
 
+- Supported fields under `chart.yaml` for dependencies:
+
 | Field          | Description                                               | Required? |
 |----------------|-----------------------------------------------------------|-----------|
 | Name           | The name of the dependency chart                          | Yes       |
@@ -152,4 +154,17 @@ appVersion: "1.16.0"
 | import-values  | A mapping of source values to parent values               | No        |
 | Alias          | An alternative name to give the dependency                | No        |
 
+- `helm dependency command`
 
+| Command             | Description                                                                                  |
+|---------------------|----------------------------------------------------------------------------------------------|
+| helm dependency list | Lists the dependencies for the given chart.                                                  |
+| helm dependency update | Downloads the dependencies listed in Chart.yaml and generates a Chart.lock file.              |
+| helm dependency build | Downloads the dependencies listed in Chart.lock. If the Chart.lock file is not found, then this command will mirror the behavior of the helm dependency update command. |
+
+
+```shell
+helm dependency list deps-chart 
+NAME    VERSION REPOSITORY                                                                      STATUS 
+mariadb 9.5.0   https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami     missing
+```
