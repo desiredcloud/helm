@@ -163,8 +163,52 @@ appVersion: "1.16.0"
 | helm dependency build | Downloads the dependencies listed in Chart.lock. If the Chart.lock file is not found, then this command will mirror the behavior of the helm dependency update command. |
 
 
+- Clone this repo if you want to do hands-on:
+```shell
+$ git clone https://github.com/desiredcloud/helm.git
+$ cd helm/examples
+```
+
 ```shell
 helm dependency list deps-chart 
 NAME    VERSION REPOSITORY                                                                      STATUS 
 mariadb 9.5.0   https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami     missing
 ```
+
+- Status `missing` means, the dependency chart is not downloaded yet.
+- We can perform `dependecy update` to download it
+
+```shell
+helm dependency update deps-chart/
+
+helm dependency list deps-chart/  
+NAME    VERSION REPOSITORY                                                                      STATUS
+mariadb 9.5.0   https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami     ok    
+```
+
+- Dependencies gets downloaded under `charts` folder and version is updated in `Chart.lock` file.
+```shell
+ls  deps-chart/charts 
+mariadb-9.5.0.tgz
+
+cat deps-chart/Chart.lock 
+dependencies:
+- name: mariadb
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+  version: 9.5.0
+digest: sha256:6621adebbb98601072b13d904b11f42e31919298a590713229f6061795606fcd
+generated: "2024-02-22T10:09:10.905206+05:30"
+```
+
+- You can use `wildcard` version for dependencies.
+  - For example:
+  - ```shell
+    name: mariadb
+    version: 9.x.x
+    ```
+  - This will download the latest version starting with major version `9`.
+  - ```shell
+    helm dep update deps-chart 
+    
+    ```
+
