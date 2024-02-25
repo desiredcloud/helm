@@ -209,6 +209,174 @@ generated: "2024-02-22T10:09:10.905206+05:30"
   - This will download the latest version starting with major version `9`.
   - ```shell
     helm dep update deps-chart 
-    
+    cat deps-chart/Chart.lock 
+    dependencies:
+    - name: mariadb
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      version: 9.8.1
     ```
 
+- `helm dep update` will to the latest version, to keep consistent with the version specified in `Chart.lock` run cmd `helm deps build`
+```shell
+tree deps-chart/
+locales-launch: Data of en_IN locale not found, generating, please wait...
+deps-chart/
+|-- Chart.lock
+|-- Chart.yaml
+|-- charts
+|   `-- mariadb-9.8.1.tgz
+|-- templates
+|   |-- NOTES.txt
+|   |-- _helpers.tpl
+|   |-- deployment.yaml
+|   |-- hpa.yaml
+|   |-- ingress.yaml
+|   |-- service.yaml
+|   |-- serviceaccount.yaml
+|   `-- tests
+|       `-- test-connection.yaml
+`-- values.yaml
+
+rm -rf deps-chart/charts/
+
+helm dependency build deps-chart/
+```
+
+## Conditional Dependencies
+
+- `Chart.yaml`
+```yaml
+dependencies:
+  - name: mariadb
+    condition: mariadb.enabled
+```
+
+- `values.yaml`
+```yaml
+mariadb:
+  enabled: true
+```
+
+```shell
+helm dependency update examples/condition-example/
+
+kubectl create ns conditional
+
+helm install conditional-chart examples/condition-example/ -n conditional
+
+helm get manifest conditional-chart -n conditional | grep mariadb
+  name: conditional-chart-mariadb
+  ...
+```
+
+- Disabling `mariadb.enabled` flag
+```shell
+helm upgrade conditional-chart examples/condition-example/ -n conditonal --set mariadb.enabled=false
+helm get manifest conditional-chart -n conditonal | grep mariadb
+...
+```
+
+## Tags based dependencies
+
+- `Chart.yaml`
+```yaml
+dependencies:
+  - name: mariadb
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 9.5.0
+    tags:
+      - backend
+      - database
+  - name: memcached
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 5.15.6
+    tags:
+      - backend
+      - cache
+```
+
+```yaml
+tags:
+  backend: true
+```
+
+```shell
+helm dependency build examples/tags-example/
+
+helm upgrade conditional-chart examples/tags-example/ -n conditonal
+
+helm get manifest conditional-chart -n conditonal | grep 'mariadb\|memcached'
+  name: conditional-chart-mariadb
+  ...
+  name: conditional-chart-memcached
+  ...
+```
+
+- To only include database, set ` --set tags.backend=false --set tags.database=true`
+```shell
+helm upgrade conditional-chart examples/tags-example/ -n conditonal --set tags.backend=false --set tags.database=true
+```
+
+- When both `conditional` and `tags` are used, then `conditional` override tags. 
+
+## Overriding Dependencies names and values
+
+- Dependency mentioned in `Chart.yaml`:
+```yaml
+dependencies:
+  - name: mariadb
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami 
+    version: 9.5.0
+```
+
+- Overriding `mariadb` in `values.yaml`:
+```yaml
+mariadb:
+  image:
+    registry: <diff-registry>
+    repository: <diff-repository>
+    tag: <another-tag>
+```
+
+## Dependencies Alias
+
+- Here, with the help of `alais` we can deploy multiple instances of `mariadb` with same `parameters`.
+- This way, we can also install multiple `mariadb` instance of different version.
+```yaml
+dependencies:
+  - name: mariadb
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 9.5.0
+    alias: db1
+  - name: mariadb
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    version: 9.5.0
+    alias: db2
+```
+
+## import-values
+
+- Application chart
+
+```yaml
+exports:
+  image:
+    registry: my-registry
+    repository: my-repository
+    tag: my-tag
+```
+
+- Dependency chart
+
+```yaml
+dependencies:
+  - name: dependency
+    repository: http://localhost:8080
+    version: 1.0.0
+    import-values:
+      - image
+```
+
+---
+
+[more](https://helm.sh/docs/topics/charts/#chart-dependencies)

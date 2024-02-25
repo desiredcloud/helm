@@ -114,7 +114,7 @@ helm search hub wordpress --output yaml
 - Will add the `Bitnami` repo in your local index.
   - `archive-full-index` will list all the old charts as well.
 ```shell
-% helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami 
+helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami 
 % helm repo list
 NAME             	URL                                                                                                              
 bitnami          	https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami

@@ -1,4 +1,4 @@
-# Default values for deps-chart.
+# Default values for tags-example.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -81,5 +81,5 @@ tolerations: []
 
 affinity: {}
 
-mariadb:
-  enabled: true
+tags:
+  backend: true
